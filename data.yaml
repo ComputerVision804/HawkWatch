@@ -1,0 +1,15 @@
+# data.yaml
+
+# Path to your dataset
+path: drone_yolo_dataset
+
+# Directories for train, val, and test datasets
+train: train/images
+val: val/images
+test: test/images
+
+# Number of classes (replace with your actual number of classes)
+nc: 1  # Example: 1 class for "drone"
+
+# Class names (replace 'drone' with your actual class name)
+names: ['drone']
