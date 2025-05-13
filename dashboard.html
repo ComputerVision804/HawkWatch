@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drone Detection Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            font-family: sans-serif;
+            text-align: center;
+        }
+        video, canvas {
+            margin: 20px auto;
+            border: 2px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚁 Drone Detection Dashboard</h1>
+    
+    <img src="{{ url_for('video_feed') }}" width="700"><br>
+
+    <a href="/download_csv" style="color: white;">📁 Download Detection Logs (CSV)</a><br><br>
+
+    <canvas id="detectionChart" width="600" height="200"></canvas>
+
+    <audio id="alertSound" src="{{ url_for('static', filename='alert.mp3') }}"></audio>
+
+    <script>
+        const ctx = document.getElementById('detectionChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Drone Detections',
+                    data: [],
+                    borderColor: 'lime',
+                    borderWidth: 2,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: { color: 'white' },
+                        title: { display: true, text: 'Time', color: 'white' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: 'white' },
+                        title: { display: true, text: 'Count', color: 'white' }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                }
+            }
+        });
+
+        let lastCount = 0;
+        setInterval(() => {
+            fetch('/api/detections')
+                .then(res => res.json())
+                .then(data => {
+                    const now = new Date().toLocaleTimeString();
+                    chart.data.labels.push(now);
+                    chart.data.datasets[0].data.push(data.count);
+
+                    if (chart.data.labels.length > 20) {
+                        chart.data.labels.shift();
+                        chart.data.datasets[0].data.shift();
+                    }
+
+                    chart.update();
+
+                    if (data.count > lastCount) {
+                        document.getElementById('alertSound').play();
+                    }
+                    lastCount = data.count;
+                });
+        }, 5000);
+    </script>
+</body>
+</html>
