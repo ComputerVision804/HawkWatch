@@ -49,6 +49,9 @@ for d in required_dirs:
 
 # Load YOLOv8 Nano model
 model = YOLO("yolov8n.yaml")
+![Figure_1](https://github.com/user-attachments/assets/935e2da0-4233-4bd8-8df6-c3331ec7a9a7)
+![1](https://github.com/user-attachments/assets/a1b1b418-8321-4315-a16b-34d91549abf7)
+![Figure_11](https://github.com/user-attachments/assets/a780a0b2-9741-471b-b679-8a725fdf39a3)
 
 # Train the model
 model.train(
